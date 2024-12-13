@@ -1,7 +1,10 @@
 # Create Foveated Blur
 Blur every pixel with a different kernel size based on the distance from the center of the image. The further away from the center, the larger the kernel size. This creates a foveated blur effect, where the center of the image is sharp and the edges are blurred.
-Given a map of sigma values for each pixel, this code automatically creates a foveated blur effect on a series of images. Store the sigmas in a png and normalize it by dividing by the maximum sigma value and save the file as "SigmaPX-MAXVALUE.png". This transfomation will then be undone when applying the kernels.
-
+Given a map of sigma values for each pixel, this code automatically creates a foveated blur effect on a series of images. Store the sigmas in a png and normalize it by dividing by the maximum sigma value and save the file as "SigmaPX-MAXVALUE.png". This transformation will then be undone when applying the kernels. For computational reasons, a sigma with non-integer values will be approximated as a linear interpolation between the two neighboring integer sigmas. Example: 
+```python
+# sigma = 2.3
+blurred_pixel = blur(pixel, sigma=2) * 0.7 + blur(pixel, sigma=3) * 0.3
+```
 ## Installation
 ```shell
 pip install -r requirements.txt
