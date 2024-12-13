@@ -45,8 +45,9 @@ def generate_preblurred_image(img: np.ndarray, max_value: int):
 
     # Apply Gaussian filters for all levels
     for i in range(max_value):
-        sigma = i + 1
-        gaussian_filter(img, sigma=(sigma, sigma, 0), output=levels[i+1], truncate=2)  # Store directly in `levels`
+        # sigma = i + 1
+        sigma = np.sqrt((i+1)**2 - i**2)  # Calculate the equivalent sigma for the 2D Gaussian
+        gaussian_filter(levels[i], sigma=(sigma, sigma, 0), output=levels[i+1], truncate=2)  # Store directly in `levels`
 
     return levels
 
@@ -78,7 +79,7 @@ def task(img_path: str, sigma_map: np.ndarray, max_level: int, suffix: str, corr
     # restore the dynamic range
     # blurred_img = np.clip((blurred_img - 2/255) * 1/(152/255), 0, 1)
     blurred_img = np.clip((blurred_img - 4/255) * 1/(174/255), 0, 1)
-    save_image(blurred_img, img_path, suffix)
+    save_image(blurred_img, img_path, "-" + suffix)
 
     if correct_source_images:
         # img = np.clip((img - 2/255) * 1/(152/255), 0, 1)
@@ -97,7 +98,7 @@ def parse_args():
     parser = ArgumentParser(description="Foveated Blurring")
     parser.add_argument("--sigma_map", "-sm", type=str, help="Path to the sigma map", required=True)
     parser.add_argument("--source", '-src', type=str, help="Path to the source images", required=True)
-    parser.add_argument("--suffix", '-suf', type=str, help="Suffix to add to the output images", default="-s20")
+    parser.add_argument("--suffix", '-suf', type=str, help="Suffix to add to the output images", default="s20")
     parser.add_argument("--correct_source", '-s0', help="Path to the source images", action="store_true")
     parser.add_argument("--num_processes", "-np", type=int, help="Number of processes to use", default=9)
     return parser.parse_args()
